@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.mehmetpekdemir.petclinic.model.Owner;
 
+/**
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 public interface OwnerRepository {
 	List<Owner> findAll();
 
