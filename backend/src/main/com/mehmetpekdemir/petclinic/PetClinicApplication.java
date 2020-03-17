@@ -2,7 +2,11 @@ package com.mehmetpekdemir.petclinic;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+/**
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 @SpringBootApplication
 public class PetClinicApplication {
 
