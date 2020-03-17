@@ -1,6 +1,6 @@
 # Pet Clinic Application
 
-#### I developed a web application by using Spring Boot && React.
+#### I am developing a web application by using Spring Boot && React. Not finished yet.
 
 ### Tech stack:
   - Spring Boot
