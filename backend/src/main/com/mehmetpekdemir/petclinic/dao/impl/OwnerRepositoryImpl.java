@@ -10,6 +10,12 @@ import org.springframework.stereotype.Repository;
 import com.mehmetpekdemir.petclinic.dao.OwnerRepository;
 import com.mehmetpekdemir.petclinic.model.Owner;
 
+/**
+ * Owner için persistance katmanım. Veritabanı islemlerinin yapıldığı kısım.
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 @Repository("ownerRepository")
 public class OwnerRepositoryImpl implements OwnerRepository {
 

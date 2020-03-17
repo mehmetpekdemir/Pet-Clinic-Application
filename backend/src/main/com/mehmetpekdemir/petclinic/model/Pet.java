@@ -10,7 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
+/**
+ * Pet Entity
+ * @author MEHMET PEKDEMIR 
+ *
+ */
 @Entity
 @Table(name = "pet")
 public class Pet {

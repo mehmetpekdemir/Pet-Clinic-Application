@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.mehmetpekdemir.petclinic.model.Pet;
 
+/**
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 public interface PetRepository {
 	Pet findById(Long id);
 

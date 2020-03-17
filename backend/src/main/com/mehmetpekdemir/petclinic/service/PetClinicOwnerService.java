@@ -5,6 +5,11 @@ import java.util.List;
 import com.mehmetpekdemir.petclinic.exception.OwnerNotFoundException;
 import com.mehmetpekdemir.petclinic.model.Owner;
 
+/**
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 public interface PetClinicOwnerService {
 	List<Owner> findOwners();
 

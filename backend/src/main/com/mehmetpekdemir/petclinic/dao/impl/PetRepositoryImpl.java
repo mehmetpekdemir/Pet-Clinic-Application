@@ -10,6 +10,12 @@ import org.springframework.stereotype.Repository;
 import com.mehmetpekdemir.petclinic.dao.PetRepository;
 import com.mehmetpekdemir.petclinic.model.Pet;
 
+/**
+ * Pet için persistance katmanım. Veritabanı islemlerinin yapıldığı kısım.
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 @Repository("petRepository")
 public class PetRepositoryImpl implements PetRepository {
 

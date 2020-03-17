@@ -10,14 +10,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+/**
+ * Owner entity
+ * @author MEHMET PEKDEMIR
+ *
+ */
 @Entity
 @Table(name = "owner")
-@XmlRootElement
 public class Owner {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,7 @@ public class Owner {
 	public Long getId() {
 		return id;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -52,7 +53,6 @@ public class Owner {
 		this.lastName = lastName;
 	}
 
-	@XmlTransient
 	@JsonIgnore
 	public Set<Pet> getPets() {
 		return pets;

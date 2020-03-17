@@ -13,8 +13,16 @@ import com.mehmetpekdemir.petclinic.exception.OwnerNotFoundException;
 import com.mehmetpekdemir.petclinic.model.Owner;
 import com.mehmetpekdemir.petclinic.service.PetClinicOwnerService;
 
+/**
+ * Owner için gerekli olan service katmanım(business(iş) katmanım) Buradan
+ * Repository(Dao) katmanıma yönlendiriyoruz veritabanı işlemlerinini veritabanı
+ * katmanında yapıyoruz. Burada sadece iş kodları bulunmaktadır.
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class PetClinicOwnerServiceImpl implements PetClinicOwnerService {
 
 	private final OwnerRepository ownerRepository;
@@ -27,20 +35,25 @@ public class PetClinicOwnerServiceImpl implements PetClinicOwnerService {
 		this.petRepository = petRepository;
 	}
 
+	/**
+	 * Transactional(readOnly = true) yapılmasının sebebi burada bir trancation
+	 * islemi oluşmayacaktır. Veri üzerinde bir değişiklik yapmadığımız için sadece
+	 * okunur yaptık.
+	 */
 	@Override
-	@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Owner> findOwners() {
 		return ownerRepository.findAll();
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Owner> findOwners(String lastName) {
 		return ownerRepository.findByLastName(lastName);
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Owner findOwner(Long id) throws OwnerNotFoundException {
 		Owner owner = ownerRepository.findById(id);
 		if (owner == null)
@@ -58,8 +71,8 @@ public class PetClinicOwnerServiceImpl implements PetClinicOwnerService {
 		ownerRepository.updateOwner(owner);
 	}
 
-	@Override 
-	public void deleteOwner(Long id) { //Transactional eklenecek.
+	@Override
+	public void deleteOwner(Long id) {
 		petRepository.deleteByOwnerId(id);
 		ownerRepository.deleteOwner(id);
 	}

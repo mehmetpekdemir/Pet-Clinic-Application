@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.mehmetpekdemir.petclinic.model.Owner;
 
-public class PetClinicRestControllerTests {
+public class OwnerRestControllerTests {
 
 	private static final String URL_ID = "http://localhost:8088/rest/owner/1";
 	private static final String URL_LASTNAME = "http://localhost:8088/rest/owner?lastName=Pekdemir";
