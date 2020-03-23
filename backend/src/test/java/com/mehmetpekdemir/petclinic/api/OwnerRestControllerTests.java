@@ -7,34 +7,43 @@ import java.util.stream.Collectors;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import com.mehmetpekdemir.petclinic.model.Owner;
 
+/**
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("dev")
 public class OwnerRestControllerTests {
 
-	private static final String URL_ID = "http://localhost:8088/rest/owner/1";
-	private static final String URL_LASTNAME = "http://localhost:8088/rest/owner?lastName=Pekdemir";
-	private static final String URL_ALL_OWNER = "http://localhost:8088/rest/owners";
-	private static final String URL_CREATE_OWNER = "http://localhost:8088/rest/owner";
-	private static final String URL_UPDATE_OWNER = "http://localhost:8088/rest/owner/5";
-	private static final String URL_DELETE_OWNER = "http://localhost:8088/rest/owner/4";
-
-	private RestTemplate restTemplate;
+	@Autowired
+	private TestRestTemplate testRestTemplate;
 
 	@Before
 	public void setUp() {
-		restTemplate = new RestTemplate();
+		testRestTemplate = testRestTemplate.withBasicAuth("user2", "secret");
+
 	}
 
 	@Test
 	public void testGetOwnerById() {
-		ResponseEntity<Owner> response = restTemplate.getForEntity(URL_ID, Owner.class);
+		ResponseEntity<Owner> response = testRestTemplate.getForEntity("http://localhost:8088/rest/owner/8",
+				Owner.class);
 		MatcherAssert.assertThat(response.getStatusCodeValue(), Matchers.equalTo(200));
 		MatcherAssert.assertThat(response.getBody().getFirstName(), Matchers.equalTo("Mehmet"));
 	}
@@ -43,7 +52,8 @@ public class OwnerRestControllerTests {
 	@Test
 	public void testGetsOwnersByLastName() {
 
-		ResponseEntity<List> response = restTemplate.getForEntity(URL_LASTNAME, List.class);
+		ResponseEntity<List> response = testRestTemplate
+				.getForEntity("http://localhost:8088/rest/owner?lastName=Pekdemir", List.class);
 		MatcherAssert.assertThat(response.getStatusCodeValue(), Matchers.equalTo(200));
 
 		List<Map<String, String>> body = response.getBody();
@@ -56,14 +66,14 @@ public class OwnerRestControllerTests {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void testGetOwners() {
-		ResponseEntity<List> response = restTemplate.getForEntity(URL_ALL_OWNER, List.class);
+		ResponseEntity<List> response = testRestTemplate.getForEntity("http://localhost:8088/rest/owners", List.class);
 		MatcherAssert.assertThat(response.getStatusCodeValue(), Matchers.equalTo(200));
 
 		List<Map<String, String>> body = response.getBody();
 
 		List<String> firstNames = body.stream().map(e -> e.get("firstName")).collect(Collectors.toList());
 
-		MatcherAssert.assertThat(firstNames, Matchers.contains("Mehmet", "Yusuf", "Mehmet2"));
+		MatcherAssert.assertThat(firstNames, Matchers.contains("Mehmet", "Yusuf", "test"));
 
 	}
 
@@ -73,9 +83,9 @@ public class OwnerRestControllerTests {
 		owner.setFirstName("Mehmet");
 		owner.setLastName("Pekdemir");
 
-		URI location = restTemplate.postForLocation(URL_CREATE_OWNER, owner);
+		URI location = testRestTemplate.postForLocation("http://localhost:8088/rest/owner", owner);
 
-		Owner owner2 = restTemplate.getForObject(location, Owner.class);
+		Owner owner2 = testRestTemplate.getForObject(location, Owner.class);
 
 		MatcherAssert.assertThat(owner2.getFirstName(), Matchers.equalTo(owner.getFirstName()));
 		MatcherAssert.assertThat(owner2.getLastName(), Matchers.equalTo(owner.getLastName()));
@@ -84,15 +94,15 @@ public class OwnerRestControllerTests {
 
 	@Test
 	public void testUpdateOwner() {
-		Owner owner = restTemplate.getForObject(URL_UPDATE_OWNER, Owner.class);
+		Owner owner = testRestTemplate.getForObject("http://localhost:8088/rest/owner/12", Owner.class);
 
 		MatcherAssert.assertThat(owner.getFirstName(), Matchers.equalTo("Mehmet"));
 		MatcherAssert.assertThat(owner.getLastName(), Matchers.equalTo("Pekdemir"));
 
 		owner.setFirstName("Mehmet2");
 		owner.setLastName("Pekdemir2");
-		restTemplate.put(URL_UPDATE_OWNER, owner);
-		owner = restTemplate.getForObject(URL_UPDATE_OWNER, Owner.class);
+		testRestTemplate.put("http://localhost:8088/rest/owner/12", owner);
+		owner = testRestTemplate.getForObject("http://localhost:8088/rest/owner/12", Owner.class);
 
 		MatcherAssert.assertThat(owner.getFirstName(), Matchers.equalTo("Mehmet2"));
 		MatcherAssert.assertThat(owner.getLastName(), Matchers.equalTo("Pekdemir2"));
@@ -100,10 +110,8 @@ public class OwnerRestControllerTests {
 
 	@Test
 	public void testDeleteOwner() {
-		restTemplate.delete(URL_DELETE_OWNER);
 		try {
-			restTemplate.getForEntity(URL_DELETE_OWNER, Owner.class);
-			Assert.fail("Should have not returned owner");
+			testRestTemplate.delete("http://localhost:8088/rest/owner/10");
 		} catch (HttpClientErrorException httpClientErrorException) {
 			MatcherAssert.assertThat(httpClientErrorException.getStatusCode().value(), Matchers.equalTo(404));
 		}
