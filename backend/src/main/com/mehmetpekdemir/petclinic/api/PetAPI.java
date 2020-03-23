@@ -114,6 +114,7 @@ public class PetAPI {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/pet/{id}")
 	public ResponseEntity<?> deletePet(@PathVariable("id") Long id) {
 		try {
+			petClinicPetService.findPet(id);
 			petClinicPetService.deletePet(id);
 			return ResponseEntity.ok().build();
 		} catch (PetNotFoundException petNotFoundException) {
