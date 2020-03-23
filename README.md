@@ -1,10 +1,11 @@
 # Pet Clinic Application
 
-#### I am developing a web application by using Spring Boot && React. Not finished yet.
+#### I am developing a web application by using Spring Boot && Jsp. Not finished yet.
 
 ### Tech stack:
   - Spring Boot
-  - React.js
+  - Spring Security
+  - Jsp
   - Html-Css-Bootstrap-Javascript
 
 ### Features (with unit & integration tests)
