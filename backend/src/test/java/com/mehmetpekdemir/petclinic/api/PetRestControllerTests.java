@@ -7,33 +7,41 @@ import java.util.stream.Collectors;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import com.mehmetpekdemir.petclinic.model.Pet;
 
+/**
+ * 
+ * @author MEHMET PEKDEMIR
+ *
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("dev")
 public class PetRestControllerTests {
 
-	private static final String URL_ID = "http://localhost:8088/rest/pet/1";
-	private static final String URL_PETS = "http://localhost:8088/rest/pets/1";
-	private static final String URL_CREATE_PET = "http://localhost:8088/rest/pet";
-	private static final String URL_UPDATE_PET = "http://localhost:8088/rest/pet/2";
-	private static final String URL_DELETE_PET = "http://localhost:8088/rest/pet/3";
-
-	private RestTemplate restTemplate;
+	@Autowired
+	private TestRestTemplate testRestTemplate;
 
 	@Before
 	public void setUp() {
-		restTemplate = new RestTemplate();
+		testRestTemplate = testRestTemplate.withBasicAuth("user2", "secret");
 	}
 
 	@Test
 	public void testGetPetById() {
-		ResponseEntity<Pet> response = restTemplate.getForEntity(URL_ID, Pet.class);
+		ResponseEntity<Pet> response = testRestTemplate.getForEntity("http://localhost:8088/rest/pet/5", Pet.class);
 		MatcherAssert.assertThat(response.getStatusCodeValue(), Matchers.equalTo(200));
 		MatcherAssert.assertThat(response.getBody().getName(), Matchers.equalTo("Chucky"));
 	}
@@ -42,14 +50,14 @@ public class PetRestControllerTests {
 	@Test
 	public void testGetsPetsByOwnerId() {
 
-		ResponseEntity<List> response = restTemplate.getForEntity(URL_PETS, List.class);
+		ResponseEntity<List> response = testRestTemplate.getForEntity("http://localhost:8088/rest/pets/8", List.class);
 		MatcherAssert.assertThat(response.getStatusCodeValue(), Matchers.equalTo(200));
 
 		List<Map<String, String>> body = response.getBody();
 
 		List<String> names = body.stream().map(e -> e.get("name")).collect(Collectors.toList());
 
-		MatcherAssert.assertThat(names, Matchers.contains("Chucky", "Karabas"));
+		MatcherAssert.assertThat(names, Matchers.contains("Chucky", "Minnos"));
 	}
 
 	@Test
@@ -57,9 +65,9 @@ public class PetRestControllerTests {
 		Pet pet = new Pet();
 		pet.setName("Test");
 
-		URI location = restTemplate.postForLocation(URL_CREATE_PET, pet);
+		URI location = testRestTemplate.postForLocation("http://localhost:8088/rest/pet", pet);
 
-		Pet pet2 = restTemplate.getForObject(location, Pet.class);
+		Pet pet2 = testRestTemplate.getForObject(location, Pet.class);
 
 		MatcherAssert.assertThat(pet2.getName(), Matchers.equalTo(pet.getName()));
 
@@ -67,15 +75,15 @@ public class PetRestControllerTests {
 
 	@Test
 	public void testUpdatePet() {
-		Pet pet = restTemplate.getForObject(URL_UPDATE_PET, Pet.class);
+		Pet pet = testRestTemplate.getForObject("http://localhost:8088/rest/pet/9", Pet.class);
 
-		MatcherAssert.assertThat(pet.getName(), Matchers.equalTo("Karabas"));
+		MatcherAssert.assertThat(pet.getName(), Matchers.equalTo("Test"));
 
 		pet.setName("TestPet");
 
-		restTemplate.put(URL_UPDATE_PET, pet);
+		testRestTemplate.put("http://localhost:8088/rest/pet/9", pet);
 
-		pet = restTemplate.getForObject(URL_UPDATE_PET, Pet.class);
+		pet = testRestTemplate.getForObject("http://localhost:8088/rest/pet/9", Pet.class);
 
 		MatcherAssert.assertThat(pet.getName(), Matchers.equalTo("TestPet"));
 
@@ -83,10 +91,8 @@ public class PetRestControllerTests {
 
 	@Test
 	public void testDeletePet() {
-		restTemplate.delete(URL_DELETE_PET);
 		try {
-			restTemplate.getForEntity(URL_DELETE_PET, Pet.class);
-			Assert.fail("Should have not returned pet");
+			testRestTemplate.delete("http://localhost:8088/rest/pet/7");
 		} catch (HttpClientErrorException httpClientErrorException) {
 			MatcherAssert.assertThat(httpClientErrorException.getStatusCode().value(), Matchers.equalTo(404));
 		}
