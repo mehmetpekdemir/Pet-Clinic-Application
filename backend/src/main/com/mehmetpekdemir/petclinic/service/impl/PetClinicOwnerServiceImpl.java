@@ -3,6 +3,7 @@ package com.mehmetpekdemir.petclinic.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +40,11 @@ public class PetClinicOwnerServiceImpl implements PetClinicOwnerService {
 	 * Transactional(readOnly = true) yapılmasının sebebi burada bir trancation
 	 * islemi oluşmayacaktır. Veri üzerinde bir değişiklik yapmadığımız için sadece
 	 * okunur yaptık.
+	 * ROLE_USER veya ROLE_EDITOR kimligine sahip olan herkes bu methoda erişebilmelidir.
 	 */
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	@Secured(value={"ROLE_USER","ROLE_EDITOR"})
 	public List<Owner> findOwners() {
 		return ownerRepository.findAll();
 	}
