@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,11 +33,14 @@ public class OwnerAPI {
 
 	/**
 	 * Bütün ownerleri getirir.
-	 * 
+	 * Cacheleme işlemi yapıldı.
 	 * @return HttpStatus kodunu döner(200)
 	 */
+	
+	@Cacheable("allOwners")
 	@RequestMapping(method = RequestMethod.GET, value = "/owners")
 	public ResponseEntity<List<Owner>> getOwners() {
+		System.out.println("Cachlendi.");
 		List<Owner> owners = petClinicService.findOwners();
 		return ResponseEntity.ok(owners);
 	}
