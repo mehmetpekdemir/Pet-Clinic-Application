@@ -3,6 +3,7 @@ package com.mehmetpekdemir.petclinic.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -63,18 +64,21 @@ public class PetClinicOwnerServiceImpl implements PetClinicOwnerService {
 			throw new OwnerNotFoundException("Owner not found");
 		return owner;
 	}
-
+	
 	@Override
+	@CacheEvict(cacheNames = "allOwners",allEntries = true)
 	public void createOwner(Owner owner) {
 		ownerRepository.createOwner(owner);
 	}
 
 	@Override
+	@CacheEvict(cacheNames = "allOwners",allEntries = true)
 	public void updateOwner(Owner owner) {
 		ownerRepository.updateOwner(owner);
 	}
 
 	@Override
+	@CacheEvict(cacheNames = "allOwners",allEntries = true)
 	public void deleteOwner(Long id) {
 		petRepository.deleteByOwnerId(id);
 		ownerRepository.deleteOwner(id);

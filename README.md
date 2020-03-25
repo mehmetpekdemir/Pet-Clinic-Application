@@ -1,14 +1,13 @@
-# Pet Clinic Application
+# Pet Clinic Application Back-End Project
 
-#### I am developing a web application by using Spring Boot && Jsp. Not finished yet.
+#### I developed a web application by using Spring Boot. 
+
+##### You can use this project. You need to add front-end.
 
 ### Tech stack:
   - Spring Boot
   - Spring Security
-  - Jsp
-  - Html-Css-Bootstrap-Javascript
+  - Hibernate
 
 ### Features (with unit & integration tests)
- - TestName
- 
-![Home Page](---)
+
